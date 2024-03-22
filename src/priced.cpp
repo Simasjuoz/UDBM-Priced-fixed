@@ -72,7 +72,7 @@ static bool pdbm_areOnZeroCycle(const PDBM pdbm, cindex_t dim, cindex_t i, cinde
  *
  * @post forall i.next[i] == 0 || next[i] > i
  */
-static void dbm_findZeroCycles(dbm::reader dbm, cindex_t* next)
+void dbm_findZeroCycles(dbm::reader dbm, cindex_t* next)
 {
     const auto dim = dbm.get_dim();
     for (cindex_t i = 0; i < dim; ++i) {

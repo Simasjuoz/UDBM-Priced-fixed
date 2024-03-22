@@ -15,6 +15,7 @@
 #include "dbm/dbm.h"
 #include "dbm/mingraph.h"
 #include "base/inttypes.h"
+#include "dbm_raw.hpp"
 
 #include <iosfwd>
 #include <utility>
@@ -789,5 +790,8 @@ bool pdbm_hasNormalForm(PDBM pdbm, cindex_t dim);
 void pdbm_normalise(PDBM pdbm, cindex_t dim);
 
 ///////////////////////////////////////////////////////////////////////////
+
+static void dbm_findZeroCycles(dbm::reader dbm, cindex_t* next);
+static bool isRedundant(dbm::reader dbm, cindex_t i, cindex_t j, cindex_t* next);
 
 #endif /* INCLUDE_DBM_PRICED_H */
