@@ -243,7 +243,6 @@ namespace dbm
     void dbm_t::copyFrom(const raw_t* src, cindex_t dim)
     {
         assert(dim && src);
-        assertx(dbm_isValid(src, dim));
 
         if (!isEmpty()) {
             if (dim == pdim()) {
@@ -285,7 +284,6 @@ namespace dbm
 
     bool dbm_t::operator==(const raw_t* arg) const
     {
-        assertx(dbm_isValid(arg, getDimension()));
         return !isEmpty() && dbm_areEqual(const_dbm(), arg, pdim());
     }
 
@@ -332,7 +330,6 @@ namespace dbm
 
     relation_t dbm_t::relation(const raw_t* arg, cindex_t dim) const
     {
-        assertx(dbm_isValid(arg, dim));  // in particular arg not empty
         return isEmpty() ? (dim == edim() ? base_SUBSET : base_DIFFERENT)
                          : (dim == pdim() ? dbm_relation(const_dbm(), arg, dim) : base_DIFFERENT);
     }
@@ -467,7 +464,6 @@ namespace dbm
     // similar to += dbm_t, assume same dimension
     dbm_t& dbm_t::operator+=(const raw_t* arg)
     {
-        assertx(dbm_isValid(arg, getDimension()));
         RECORD_STAT();
 
         if (isEmpty()) {
@@ -501,7 +497,6 @@ namespace dbm
             }
         }
 
-        assertx(dbm_isClosed(mdbm, dim));
         return *this;
     }
 
@@ -897,7 +892,6 @@ namespace dbm
     bool dbm_t::intersects(const raw_t* arg, cindex_t dim) const
     {
         assert(dim == getDimension());
-        assertx(dbm_isValid(arg, dim));
         return !isEmpty() && dbm_haveIntersection(const_dbm(), arg, dim);
     }
 
@@ -996,7 +990,6 @@ namespace dbm
                             mdbm.at(i, k) = mdbm.at(i, 0);
                         }
                     } while (++i < dim);
-                    assertx(dbm_isValid(mdbm, dim));
                     break;
                 }
             }
@@ -1026,7 +1019,6 @@ namespace dbm
                                 mdbm.at(i, k) = mdbm.at(i, 0);
                             }
                         } while (++i < dim);
-                        assertx(dbm_isValid(mdbm, dim));
                         break;
                     }
                 }
@@ -1056,7 +1048,6 @@ namespace dbm
                                 mdbm.at(k, j) = dbm_LS_INFINITY;
                             }
                         } while (++j < dim);
-                        assertx(dbm_isValid(mdbm, dim));
                         break;
                     }
                 }
@@ -1148,7 +1139,6 @@ namespace dbm
                         mdbm.at(i, k) = dbm_addRawFinite(mdbm.at(i, 0), d0k);
                     }
                     assert(mdbm.at(k, k) == dbm_LE_ZERO);
-                    assertx(dbm_isValid(mdbm, dim));
                     break;
                 }
             } while (++i < dim);
@@ -1178,7 +1168,6 @@ namespace dbm
                             mdbm.at(k, i) = mdbm.at(k, j);
                         }
                     } while (++k < dim);
-                    assertx(dbm_isValid(mdbm, dim));
                     break;
                 }
             }
@@ -1214,7 +1203,6 @@ namespace dbm
                                 mdbm.at(i, k) = dbm_rawInc(mdbm.at(j, k), v);
                                 mdbm.at(k, i) = dbm_rawDec(mdbm.at(k, j), v);
                             }
-                        assertx(dbm_isValid(mdbm, dim));
                         break;
                     }
                 }

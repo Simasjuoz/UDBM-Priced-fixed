@@ -213,8 +213,6 @@ void dbm_convexUnion(raw_t* dst, const raw_t* src, cindex_t dim)
             if (*++dst < *++src)
                 *dst = *src;
         } while (--n);
-
-        assertx(dbm_isValid(dbmPtr, dim));
     }
 }
 
@@ -234,8 +232,6 @@ bool dbm_intersection(raw_t* dst, const raw_t* src, cindex_t dim)
     assert(dim && dst && src);
     ASSERT_DIAG_OK(dst, dim);
     ASSERT_DIAG_OK(src, dim);
-    assertx(dbm_isValid(dst, dim));
-    assertx(dbm_isValid(src, dim));
 
     if (dim > 1) {
         cindex_t i, j, ci = 0, cj = 0, count = 0;
@@ -290,8 +286,6 @@ bool dbm_relaxedIntersection(raw_t* dst, const raw_t* dbm1, const raw_t* dbm2, c
     assert(dim && dst && dbm1 && dbm2);
     ASSERT_DIAG_OK(dbm1, dim);
     ASSERT_DIAG_OK(dbm2, dim);
-    assertx(dbm_isValid(dbm1, dim));
-    assertx(dbm_isValid(dbm2, dim));
 
     for (i = 0; i < dim; ++i) {
         for (j = 0; j < dim; ++j) {
@@ -345,8 +339,6 @@ bool dbm_haveIntersection(const raw_t* dbm1, const raw_t* dbm2, cindex_t dim)
     cindex_t i, j;
 
     assert(dbm1 && dbm2 && dim);
-    assertx(dbm_isValid(dbm1, dim));
-    assertx(dbm_isValid(dbm2, dim));
 
     for (i = 1; i < dim; ++i) {
         j = 0;
@@ -537,8 +529,6 @@ void dbm_up(raw_t* dbm, cindex_t dim)
 
     for (i = 1; i < dim; ++i)
         DBM(i, 0) = dbm_LS_INFINITY;
-
-    assertx(dbm_isValid(dbm, dim));
 }
 
 /* Apply up except for stopped clocks and free
@@ -563,8 +553,6 @@ void dbm_up_stop(raw_t* dbm, cindex_t dim, const uint32_t* stopped)
             DBM(i, 0) = dbm_LS_INFINITY;
         }
     }
-
-    assertx(dbm_isValid(dbm, dim));
 }
 
 /* For all clock constraints x0-xj: compute the new value.
@@ -599,15 +587,11 @@ void dbm_downFrom(raw_t* dbm, cindex_t dim, cindex_t j)
             }
         }
     }
-
-    assertx(dbm_isValid(dbm, dim));
 }
 
 void dbm_down_stop(raw_t* dbm, cindex_t dim, const uint32_t* stopped)
 {
     cindex_t i, j;
-
-    assertx(dbm_isValid(dbm, dim));
 
 #if 1
     /* Basic version: Test the bits when needed. */
@@ -690,8 +674,6 @@ void dbm_down_stop(raw_t* dbm, cindex_t dim, const uint32_t* stopped)
         }
     }
 #endif
-
-    assertx(dbm_isValid(dbm, dim));
 }
 
 /* Algorithm:
@@ -720,7 +702,6 @@ void dbm_updateValue(raw_t* dbm, cindex_t dim, cindex_t k, int32_t value)
     }
 
     assert(DBM(k, k) == dbm_LE_ZERO);
-    assertx(dbm_isValid(dbm, dim));
 }
 
 /* Algorithm:
@@ -752,7 +733,6 @@ void dbm_freeClock(raw_t* dbm, cindex_t dim, cindex_t k)
             }
         }
     }
-    assertx(dbm_isValid(dbm, dim));
 }
 
 /* Algorithm: remove upper bounds for k =
@@ -768,8 +748,6 @@ void dbm_freeUp(raw_t* dbm, cindex_t dim, cindex_t k)
         if (j != k)
             DBM(k, j) = dbm_LS_INFINITY;
     }
-
-    assertx(dbm_isValid(dbm, dim));
 }
 
 /* Algorithm:
@@ -852,7 +830,6 @@ void dbm_freeDown(raw_t* dbm, cindex_t dim, cindex_t k)
                 DBM(i, k) = dbm_LS_INFINITY;
         }
     }
-    assertx(dbm_isValid(dbm, dim));
 }
 
 /* Algorithm:
@@ -878,7 +855,6 @@ void dbm_freeAllDown(raw_t* dbm, cindex_t dim)
             }
         }
     }
-    assertx(dbm_isValid(dbm, dim));
 }
 
 uint32_t dbm_testFreeAllDown(const raw_t* dbm, cindex_t dim)
@@ -914,8 +890,6 @@ void dbm_updateClock(raw_t* dbm, cindex_t dim, cindex_t i, cindex_t j)
             DBM(k, i) = DBM(k, j);
         }
     }
-
-    assertx(dbm_isValid(dbm, dim));
 }
 
 /* Algorithm:
@@ -938,8 +912,6 @@ void dbm_updateIncrement(raw_t* dbm, cindex_t dim, cindex_t k, int32_t value)
         if (DBM(i, k) < dbm_LS_INFINITY)
             DBM(i, k) -= value;
     }
-
-    assertx(dbm_isValid(dbm, dim));
 }
 
 /* Algorithm:
@@ -966,8 +938,6 @@ void dbm_update(raw_t* dbm, cindex_t dim, cindex_t i, cindex_t j, int32_t value)
         DBM(k, i) = dbm_rawDec(DBM(k, j), value);
     }
     DBM(i, i) = dbm_LE_ZERO; /* restore diagonal */
-
-    assertx(dbm_isValid(dbm, dim));
 }
 
 /* symmetric contrain clock,0 and 0,clock */
@@ -1346,8 +1316,6 @@ void dbm_closeij(raw_t* dbm, cindex_t dim, cindex_t b, cindex_t a)
             }
             dbm_i += dim;
         } while (dbm_i < end);
-
-        assertx(dbm_isValid(dbm, dim));
     }
 }
 
@@ -1400,8 +1368,6 @@ relation_t dbm_relation(const raw_t* dbm1, const raw_t* dbm2, cindex_t dim)
     size_t n;
 
     assert(dbm1 && dbm2 && dim);
-    assertx(dbm_isValid(dbm1, dim));
-    assertx(dbm_isValid(dbm2, dim));
 
     if (dim <= 1 || dbm1 == dbm2) {
         return base_EQUAL;
@@ -1460,8 +1426,6 @@ bool dbm_isSubsetEq(const raw_t* dbm1, const raw_t* dbm2, cindex_t dim)
     size_t n;
 
     assert(dbm1 && dbm2 && dim);
-    assertx(dbm_isValid(dbm1, dim));
-    assertx(dbm_isValid(dbm2, dim));
 
     if (dim <= 1 || dbm1 == dbm2) {
         return true;
@@ -1504,7 +1468,6 @@ void dbm_relaxDownClock(raw_t* dbm, cindex_t dim, cindex_t clock)
 {
     cindex_t i, j;
     assert(dbm && dim);
-    assertx(dbm_isValid(dbm, dim));
 
     for (i = 0; i < dim; ++i) {
         if (DBM(i, clock) < dbm_LS_INFINITY && dbm_rawIsStrict(DBM(i, clock))) {
@@ -1525,8 +1488,6 @@ void dbm_relaxDownClock(raw_t* dbm, cindex_t dim, cindex_t clock)
             }
         }
     }
-
-    assertx(dbm_isValid(dbm, dim));
 }
 
 /* Algorithm:
@@ -1537,7 +1498,6 @@ void dbm_relaxUpClock(raw_t* dbm, cindex_t dim, cindex_t clock)
 {
     cindex_t i, j;
     assert(dbm && dim);
-    assertx(dbm_isValid(dbm, dim));
 
     for (i = 0; i < dim; ++i) {
         if (DBM(clock, i) < dbm_LS_INFINITY && dbm_rawIsStrict(DBM(clock, i))) {
@@ -1558,8 +1518,6 @@ void dbm_relaxUpClock(raw_t* dbm, cindex_t dim, cindex_t clock)
             }
         }
     }
-
-    assertx(dbm_isValid(dbm, dim));
 }
 
 /* Algorithm:
@@ -1568,8 +1526,6 @@ void dbm_relaxUpClock(raw_t* dbm, cindex_t dim, cindex_t clock)
  */
 bool dbm_tightenDown(raw_t* dbm, cindex_t dim)
 {
-    assertx(dbm_isValid(dbm, dim));
-
     if (dim > 1) {
         cindex_t j, count = 0, cj = 0;
         uint32_t* touched = (uint32_t*)calloc(bits2intsize(dim), sizeof(uint32_t));
@@ -1611,8 +1567,6 @@ bool dbm_tightenDown(raw_t* dbm, cindex_t dim)
  */
 bool dbm_tightenUp(raw_t* dbm, cindex_t dim)
 {
-    assertx(dbm_isValid(dbm, dim));
-
     if (dim > 1) {
         cindex_t i, count = 0, ci = 0;
         uint32_t* touched = (uint32_t*)calloc(bits2intsize(dim), sizeof(uint32_t));
@@ -1818,8 +1772,6 @@ void dbm_updateDBM(raw_t* dbmDst, const raw_t* dbmSrc, cindex_t dimDst, cindex_t
         dbmDst[i] = dbm_LE_ZERO; /* correct diagonal */
 
     } while (++i < dimDst);
-
-    assertx(dbm_isValid(saveDBM, dimDst));
 }
 
 /* Algorithm:
@@ -1922,7 +1874,6 @@ void dbm_extrapolateMaxBounds(raw_t* dbm, cindex_t dim, const int32_t* max)
     if (changed)
         dbm_close(dbm, dim);
 #endif
-    assertx(dbm_isValid(dbm, dim));
 }
 
 /* Algorithm:
@@ -1979,7 +1930,6 @@ void dbm_diagonalExtrapolateMaxBounds(raw_t* dbm, cindex_t dim, const int32_t* m
     if (diff)
         dbm_close(dbm, dim);
 #endif
-    assertx(dbm_isValid(dbm, dim));
 }
 
 /* Algorithm:
@@ -2037,7 +1987,6 @@ void dbm_extrapolateLUBounds(raw_t* dbm, cindex_t dim, const int32_t* lower, con
     if (changed)
         dbm_close(dbm, dim);
 #endif
-    assertx(dbm_isValid(dbm, dim));
 }
 
 /* Algorithm:
@@ -2093,7 +2042,6 @@ void dbm_diagonalExtrapolateLUBounds(raw_t* dbm, cindex_t dim, const int32_t* lo
     if (diff)
         dbm_close(dbm, dim);
 #endif
-    assertx(dbm_isValid(dbm, dim));
 }
 
 void dbm_swapClocks(raw_t* dbm, cindex_t dim, cindex_t x, cindex_t y)

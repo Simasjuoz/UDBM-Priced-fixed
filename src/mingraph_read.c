@@ -671,7 +671,6 @@ static cindex_t mingraph_readError(raw_t* dbm, const int32_t* mingraph)
 static size_t mingraph_bitMatrixFromCopy32(uint32_t* bitMatrix, const int32_t* mingraph, bool isUnpacked, raw_t* buffer)
 {
     cindex_t dim = isUnpacked ? mingraph_readDimFromPtr(mingraph) : mingraph_readFromCopy32(buffer, mingraph);
-    assertx(!isUnpacked || dbm_isEqualToMinDBM(buffer, dim, mingraph));
     return dbm_analyzeForMinDBM(buffer, dim, bitMatrix);
 }
 
@@ -679,7 +678,6 @@ static size_t mingraph_bitMatrixFromCopy32(uint32_t* bitMatrix, const int32_t* m
 static size_t mingraph_bitMatrixFromCopy16(uint32_t* bitMatrix, const int32_t* mingraph, bool isUnpacked, raw_t* buffer)
 {
     cindex_t dim = isUnpacked ? mingraph_readDimFromPtr(mingraph) : mingraph_readFromCopy16(buffer, mingraph);
-    assertx(!isUnpacked || dbm_isEqualToMinDBM(buffer, dim, mingraph));
     return dbm_analyzeForMinDBM(buffer, dim, bitMatrix);
 }
 

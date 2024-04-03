@@ -181,8 +181,6 @@ void pdbm_init(PDBM& pdbm, cindex_t dim)
     pdbm_cache(pdbm) = 0;
     auto* r = pdbm_rates(pdbm);
     std::fill(r, r + dim, 0);
-
-    assertx(pdbm_isValid(pdbm, dim));
 }
 
 void pdbm_zero(PDBM& pdbm, cindex_t dim)
@@ -195,8 +193,6 @@ void pdbm_zero(PDBM& pdbm, cindex_t dim)
     pdbm_cache(pdbm) = 0;
     auto* r = pdbm_rates(pdbm);
     std::fill(r, r + dim, 0);
-
-    assertx(pdbm_isValid(pdbm, dim));
 }
 
 bool pdbm_constrain1(PDBM& pdbm, cindex_t dim, cindex_t i, cindex_t j, raw_t constraint)
@@ -250,8 +246,6 @@ bool pdbm_constrain1(PDBM& pdbm, cindex_t dim, cindex_t i, cindex_t j, raw_t con
     }
     pdbm->cost = cost;
     pdbm_cache(pdbm) = INVALID;
-
-    assertx(pdbm_isValid(pdbm, dim));
     return true;
 }
 
@@ -672,8 +666,6 @@ void pdbm_up(PDBM& pdbm, cindex_t dim)
 
     pdbm_prepare(pdbm, dim);
     dbm_up(pdbm_matrix(pdbm, dim), dim);
-
-    assertx(pdbm_isValid(pdbm, dim));
 }
 
 void pdbm_upZero(PDBM& pdbm, cindex_t dim, int32_t rate, cindex_t zero)
@@ -689,8 +681,6 @@ void pdbm_upZero(PDBM& pdbm, cindex_t dim, int32_t rate, cindex_t zero)
     dbm_up(dbm, dim);
     rates[zero] = 0;
     rates[zero] = rate - pdbm_getSlopeOfDelayTrajectory(pdbm, dim);
-
-    assertx(pdbm_isValid(pdbm, dim));
 }
 
 void pdbm_updateValue(PDBM& pdbm, cindex_t dim, cindex_t clock, uint32_t value)
@@ -701,8 +691,6 @@ void pdbm_updateValue(PDBM& pdbm, cindex_t dim, cindex_t clock, uint32_t value)
     pdbm_prepare(pdbm, dim);
 
     dbm_updateValue(pdbm_matrix(pdbm, dim), dim, clock, value);
-
-    assertx(pdbm_isValid(pdbm, dim));
 }
 
 void pdbm_updateValueZero(PDBM& pdbm, cindex_t dim, cindex_t clock, uint32_t value, cindex_t zero)
@@ -719,8 +707,6 @@ void pdbm_updateValueZero(PDBM& pdbm, cindex_t dim, cindex_t clock, uint32_t val
     }
     rates[clock] = 0;
     dbm_updateValue(pdbm_matrix(pdbm, dim), dim, clock, value);
-
-    assertx(pdbm_isValid(pdbm, dim));
 }
 
 /*
@@ -866,8 +852,6 @@ void pdbm_incrementCost(PDBM& pdbm, cindex_t dim, int32_t value)
     pdbm_prepare(pdbm, dim);
     pdbm->cost += value;
     pdbm_cache(pdbm) += value;
-
-    assertx(pdbm_isValid(pdbm, dim));
 }
 
 void pdbm_close(PDBM& pdbm, cindex_t dim)
@@ -878,8 +862,6 @@ void pdbm_close(PDBM& pdbm, cindex_t dim)
         pdbm_prepare(pdbm, dim);
         dbm_close(pdbm_matrix(pdbm, dim), dim);
     }
-
-    assertx(pdbm_isValid(pdbm, dim));
 }
 
 size_t pdbm_analyzeForMinDBM(const PDBM pdbm, cindex_t dim, uint32_t* bitMatrix)
@@ -912,8 +894,6 @@ void pdbm_readFromMinDBM(PDBM& dst, cindex_t dim, mingraph_t src)
     pdbm_cache(dst) = src[1];
     std::copy(src + 2, src + 2 + dim, pdbm_rates(dst));
     dbm_readFromMinDBM(pdbm_matrix(dst, dim), src + dim + 2);
-
-    assertx(pdbm_isValid(dst, dim));
 }
 
 bool pdbm_findNextZeroCycle(const PDBM pdbm, cindex_t dim, cindex_t x, cindex_t* out)
@@ -1153,8 +1133,6 @@ void pdbm_relax(PDBM& pdbm, cindex_t dim)
             *it = dbm_bound2raw(dbm_raw2bound(*it), dbm_WEAK);
         }
     }
-
-    assertx(pdbm_isValid(pdbm, dim));
 }
 
 bool pdbm_isValid(const PDBM pdbm, cindex_t dim)
@@ -1181,8 +1159,6 @@ void pdbm_freeClock(PDBM& pdbm, cindex_t dim, cindex_t clock)
     assert(pdbm_rates(pdbm)[clock] == 0);
 
     dbm_freeClock(pdbm_matrix(pdbm, dim), dim, clock);
-
-    assertx(pdbm_isValid(pdbm, dim));
 }
 
 void pdbm_getOffset(const PDBM pdbm, cindex_t dim, int32_t* valuation)

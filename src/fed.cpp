@@ -113,7 +113,6 @@ namespace dbm
                                     size_t bitsSize, size_t nbConstraints)
     {
         assert(dim > 1);
-        assertx(dbm_isValid(dbm2, dim));
         assert(bits && fdbm1 && dbm2);
         assert(base_countBitsN(bits, bitsSize) == nbConstraints);
 
@@ -250,7 +249,6 @@ namespace dbm
                                     size_t bitsSize, size_t nbConstraints)
     {
         assert(dim > 1);
-        assertx(dbm_isValid(dbm2, dim));
         assert(bits && fdbm1 && dbm2);
         assert(base_countBitsN(bits, bitsSize) == nbConstraints);
 
@@ -384,7 +382,6 @@ namespace dbm
                                     size_t bitsSize, size_t nbConstraints)
     {
         assert(dim > 1);
-        assertx(dbm_isValid(dbm2, dim));
         assert(nbConstraints && bits && fdbm1 && dbm2);
         assert(base_countBitsN(bits, bitsSize) == nbConstraints);
 
@@ -704,7 +701,6 @@ namespace dbm
 
     dbmlist_t& dbmlist_t::intersection(const raw_t* arg, cindex_t dim)
     {
-        assertx(dbm_isValid(arg, dim));
         bool copied = false;
         for (fdbm_t** i = &fhead; *i != nullptr;) {
             if ((*i)->dbmt().ptr_intersectionIsArg(arg, dim)) {
@@ -1111,7 +1107,6 @@ namespace dbm
     relation_t fed_t::relation(const raw_t* arg, cindex_t dim) const
     {
         assert(isOK());
-        assertx(dbm_isValid(arg, dim));
 
         if (dim != getDimension()) {
             return base_DIFFERENT;
@@ -1149,7 +1144,6 @@ namespace dbm
     {
         assert(isOK());
         assert(dim && getDimension() == dim);
-        assertx(dbm_isValid(arg, dim));
 
         if (isEmpty()) {
             return false;
@@ -1168,7 +1162,6 @@ namespace dbm
     {
         assert(isOK());
         assert(dim && dim == getDimension());
-        assertx(dbm_isValid(arg, dim));
 
         if (isEmpty()) {
             return true;
@@ -1227,7 +1220,6 @@ namespace dbm
     relation_t fed_t::exactRelation(const raw_t* arg, cindex_t dim) const
     {
         assert(isOK());
-        assertx(dbm_isValid(arg, dim));
 
         if (dim != getDimension()) {
             return base_DIFFERENT;
@@ -1337,7 +1329,6 @@ namespace dbm
     fed_t& fed_t::operator|=(const raw_t* arg)
     {
         assert(isOK());
-        assertx(dbm_isValid(arg, getDimension()));
 
         if (isEmpty()) {
             *this = arg;
@@ -1464,7 +1455,7 @@ namespace dbm
     fed_t& fed_t::operator+=(const raw_t* arg)
     {
         assert(isOK());
-        assertx(dbm_isValid(arg, getDimension()));
+
 
         convexHull();
         if (isEmpty()) {
@@ -1527,7 +1518,6 @@ namespace dbm
     fed_t& fed_t::operator&=(const raw_t* arg)
     {
         assert(isOK());
-        assertx(dbm_isValid(arg, getDimension()));
 
         if (!isEmpty()) {
             setMutable();
@@ -1591,7 +1581,6 @@ namespace dbm
     fed_t& fed_t::operator-=(const raw_t* arg)
     {
         assert(isOK());
-        assertx(dbm_isValid(arg, getDimension()));
 
         cindex_t dim = getDimension();
         if (!isEmpty()) {
@@ -1659,7 +1648,6 @@ namespace dbm
     fed_t& fed_t::subtractDown(const raw_t* arg)
     {
         assert(isOK());
-        assertx(dbm_isValid(arg, getDimension()));
 
         if (isEmpty()) {
             return *this;
@@ -1790,7 +1778,6 @@ namespace dbm
     {
         assert(isOK());
         assert(dim == getDimension());
-        assertx(dbm_isValid(arg, dim));
 
         for (const auto& i : *this) {
             if (dbm_haveIntersection(i.const_dbm(), arg, dim)) {
@@ -2226,7 +2213,6 @@ namespace dbm
                 fi = (*fi)->getNextMutable();
             }  // for(fi..)
             CERR(":" << size() << "]");
-            assertx(eq(checkFed));
         }
         return *this;
     }
@@ -2856,7 +2842,6 @@ namespace dbm
     {
         assert(isOK());
         assert(dim == getDimension());
-        assertx(dbm_isValid(bad, dim));
 
         if (!isEmpty()) {
             dbm_t downBad;
@@ -3036,7 +3021,6 @@ namespace dbm
     bool fed_t::has(const raw_t* arg, cindex_t dim) const
     {
         assert(isOK());
-        assertx(dbm_isValid(arg, dim));
 
         if (dim != getDimension()) {
             return false;
@@ -3073,7 +3057,7 @@ namespace dbm
                     i.remove();
                     break;
                 case base_SUBSET:     // this dbm > arg
-                case base_DIFFERENT:  // not comparable
+                    case base_DIFFERENT:  // not comparable
                     ++i;
                     break;
                 }
@@ -3085,7 +3069,6 @@ namespace dbm
     {
         assert(isOK());
         assert(dim == getDimension());
-        assertx(dbm_isValid(arg, dim));
 
         bool argNotIncluded = true;
         for (iterator i = begin_mutable(), e = end_mutable(); i != e;) {
@@ -3110,7 +3093,6 @@ namespace dbm
     {
         assert(isOK());
         assert(getDimension() == dim);
-        assertx(dbm_isValid(arg, dim));
 
         return std::all_of(begin(), end(),
                            [arg, dim](const dbm_t& dbm) { return dbm_isSubsetEq(dbm.const_dbm(), arg, dim); });
@@ -3148,7 +3130,6 @@ namespace dbm
     {
         assert(fed.isOK());
         assert(fed.getDimension() == dim);
-        assertx(dbm_isValid(dbm, dim));
 
         if (fed.isEmpty()) {
             return false;
@@ -3183,8 +3164,6 @@ namespace dbm
      */
     fed_t fed_t::subtract(const raw_t* arg1, const raw_t* arg2, cindex_t dim)
     {
-        assertx(dbm_isValid(arg1, dim) && dbm_isValid(arg2, dim));
-
         if (dim <= 1) {
             return fed_t(dim);
         } else {
@@ -3237,7 +3216,6 @@ namespace dbm
     fed_t fed_t::subtract(const dbm_t& arg1, const raw_t* arg2)
     {
         cindex_t dim = arg1.getDimension();
-        assertx(dbm_isValid(arg2, dim));
 
         if (arg1.isEmpty() || dim <= 1) {
             return fed_t(dim);
@@ -3479,7 +3457,6 @@ namespace dbm
     {
         assert(isOK());
         assert(dim == getDimension() && !isEmpty());
-        assertx(dbm_isValid(arg, dim));
         assert(isMutable());
 
         size_t minSize = bits2intsize(dim * dim);

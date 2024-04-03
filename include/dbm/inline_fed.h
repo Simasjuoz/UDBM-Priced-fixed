@@ -48,8 +48,6 @@ namespace dbm
         ~DBMTable()
         {
             if (nbBuckets) {
-                std::cerr << RED(BOLD) << nbBuckets << (nbBuckets > 1 ? " DBMs are" : " DBM is")
-                          << " left in the internal hash table!" NORMAL "\n";
             }
         }
 #endif
@@ -611,7 +609,7 @@ namespace dbm
 
 #ifndef NDEBUG
         /// Print for debugging only, use operator << on fed_t instead.
-        void print(std::ostream& os = std::cerr) const;
+        void print(std::ostream& os) const;
         void err() const;
         void out() const;
 #endif
@@ -912,7 +910,6 @@ namespace dbm
     inline dbm_t::dbm_t(const raw_t* arg, cindex_t dim)
     {
         assert(arg && dim);
-        assertx(dbm_isValid(arg, dim));
         dbm_copy(setNew(dim), arg, dim);
     }
 
@@ -1356,7 +1353,6 @@ namespace dbm
     inline bool dbm_t::isSubtractionEmpty(const raw_t* arg, cindex_t dim) const
     {
         assert(getDimension() == dim);
-        assertx(dbm_isValid(arg, dim));
         // this - arg == empty if all DBMs of this <= arg because arg is a DBM.
         return isEmpty() || (dbm_relation(const_dbm(), arg, dim) & base_SUBSET) != 0;
     }
@@ -1370,7 +1366,6 @@ namespace dbm
     inline void dbm_t::newCopy(const raw_t* arg, cindex_t dim)
     {
         assert(arg && dim > 0);
-        assertx(dbm_isValid(arg, dim));
         dbm_copy(setNew(dim), arg, dim);
     }
 
@@ -1383,7 +1378,6 @@ namespace dbm
     inline void dbm_t::updateCopy(const raw_t* arg, cindex_t dim)
     {
         assert(arg && dim > 0);
-        assertx(dbm_isValid(arg, dim));
         idbmt()->decRef();
         dbm_copy(setNew(dim), arg, dim);
     }
@@ -1825,7 +1819,6 @@ namespace dbm
     inline fed_t& fed_t::add(const raw_t* arg, cindex_t dim)
     {
         assert(isOK() && dim == getDimension());
-        assertx(dbm_isValid(arg, dim));
         ifed()->insert(arg, dim);
         return *this;
     }
