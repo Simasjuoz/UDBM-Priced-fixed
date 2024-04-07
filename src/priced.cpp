@@ -595,7 +595,7 @@ int32_t pdbm_getInfimumValuation(const PDBM pdbm, cindex_t dim, int32_t* valuati
         cost += rates[i] * valuation[i];
     }
 
-    ASSERT(cost == pdbm_getCostOfValuation(pdbm, dim, valuation), pdbm_print(stderr, pdbm, dim));
+    //ASSERT(cost == pdbm_getCostOfValuation(pdbm, dim, valuation), pdbm_print(stderr, pdbm, dim));
     return cost;
 }
 

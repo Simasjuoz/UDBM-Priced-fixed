@@ -13,7 +13,7 @@
 #include "dbm/constraints.h"
 #include "dbm/dbm_raw.hpp"
 
-int32_t pdbm_infimum(dbm::reader dbm, uint32_t dim, uint32_t offsetCost, const int32_t* rates);
-void pdbm_infimum(dbm::reader dbm, uint32_t dim, uint32_t offsetCost, const int32_t* rates, int32_t* valuation);
+int32_t pdbm_infimum(const raw_t* dbm, uint32_t dim, uint32_t offsetCost, const int32_t* rates);
+void pdbm_infimum(const raw_t* dbm, uint32_t dim, uint32_t offsetCost, const int32_t* rates, int32_t* valuation);
 
 #endif /* DBM_INFIMUM_H */

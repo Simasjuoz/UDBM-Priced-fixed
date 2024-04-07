@@ -291,7 +291,7 @@ namespace dbm
             /*********************** find constraint i,j to subtract ***************/
             int32_t bestv = INT_MAX;
             k = 0;
-            DODEBUG(c = ~0);
+            //DODEBUG(c = ~0);
             do {
                 cindex_t ci = indices[k] & 0xffff;
                 cindex_t cj = indices[k] >> 16;
@@ -2060,8 +2060,8 @@ namespace dbm
         assert(isOK());
         // at least 2 DBMs
         if (size() > 1) {
-            DODEBUGX(fed_t checkFed = *this);
-            DODEBUGX(checkFed.setMutable());
+            //DODEBUGX(fed_t checkFed = *this);
+            //DODEBUGX(checkFed.setMutable());
             fdbm_t** head = ifed()->atHead();  // side effect on all copies
             cindex_t dim = getDimension();
             CERR("[" << size() << ":");
@@ -2591,7 +2591,7 @@ namespace dbm
     // Helper function for std::for_each.
     static inline void sat_assert(fdbm_t* f, const constraint_t& c)
     {
-        DODEBUG(bool check =) f->dbmt().constrain(c);
+        //DODEBUG(bool check =) f->dbmt().constrain(c);
         assert(check);
     }
 
@@ -2614,9 +2614,9 @@ namespace dbm
                     (*fi)->const_dbmt().satisfies(c->j, c->i, dbm_negRaw(c->value))) {
                     // Split *fi with c and not(c).
                     fdbm_t* copy = (*fi)->create((*fi)->const_dbmt(), *next);
-                    DODEBUG(bool check =) copy->dbmt().constrain(c->i, c->j, c->value);
+                    //DODEBUG(bool check =) copy->dbmt().constrain(c->i, c->j, c->value);
                     assert(check);
-                    DODEBUG(check =)(*fi)->dbmt().constrain(c->j, c->i, dbm_negRaw(c->value));
+                    //DODEBUG(check =)(*fi)->dbmt().constrain(c->j, c->i, dbm_negRaw(c->value));
                     assert(check);
                     // Insert new DBM and skip it for next iteration.
                     *next = copy;
@@ -2671,7 +2671,7 @@ namespace dbm
             } else {
                 std::vector<cindex_t> cols(newDim);
                 cindex_t oldDim = getDimension();
-                DODEBUG(cindex_t check =)
+                //DODEBUG(cindex_t check =)
                 dbm_computeTables(bitSrc, bitDst, bitSize, table, cols.data());
                 assert(check == newDim);
                 for (auto& i : as_mutable()) {

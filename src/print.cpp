@@ -111,13 +111,13 @@ void dbm_print(FILE* file, const raw_t* dbm, cindex_t dim)
 #ifndef NPRETTY_COLORS
 static inline void PRE_DIFF(std::ostream& os, const raw_t diff)
 {
-    if (diff != 0)
-        os << RED(BOLD);
+    /*if (diff != 0)
+        os << RED(BOLD);*/
 }
 static inline void POST_DIFF(std::ostream& os, const raw_t diff)
 {
-    if (diff != 0)
-        os << NORMAL;
+    /*if (diff != 0)
+        os << NORMAL;*/
 }
 #else
 static inline void PRE_DIFF(std::ostream& os, bool diff) {}
@@ -192,7 +192,7 @@ std::ostream& dbm_cppPrintCloseDiff(std::ostream& out, dbm::reader dbm)
     dbm_copy(copy.data(), dbm, dim);
     dbm_close(copy.data(), dim);
     if (dbm_isEmpty(copy.data(), dim)) {
-        out << RED(BOLD) "Warning: empty DBM!" NORMAL " ";
+        out << "Warning: empty DBM!";
     }
     dbm_cppPrintDiff(out, {dbm, dim}, {copy.data(), dim});
 
