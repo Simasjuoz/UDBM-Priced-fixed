@@ -435,6 +435,198 @@ relation_t pdbm_relation(const PDBM pdbm1, const PDBM pdbm2, cindex_t dim)
     }
 }
 
+relation_t pdbm_relation(const PDBM pdbm1, const PDBM pdbm2, cindex_t dim, udbm_relation_t rel)
+{
+    assert(pdbm1 && pdbm2 && dim);
+
+    auto dbm1 = pdbm_matrix(pdbm1, dim);
+    auto dbm2 = pdbm_matrix(pdbm2, dim);
+    int32_t* rates1 = pdbm_rates(pdbm1);
+    int32_t* rates2 = pdbm_rates(pdbm2);
+    uint32_t cost1 = pdbm1->cost;
+    uint32_t cost2 = pdbm2->cost;
+
+    int32_t c, d;
+
+    switch (rel) {
+    case base_SUPERSET:
+        /* pdbm2 is smaller. Check whether it is also the most
+         * expensive: This is the case when the difference between
+         * pdbm2 and pdbm1 is always non-negative (the infimum is not
+         * smaller than 0).
+         */
+        cost1 = costAtOtherOffset(dbm1, rates1, cost1, dbm2);
+        if (cost1 <= cost2 &&
+            (leq(rates1, rates1 + dim, rates2) || infOfDiff(dbm2, dim, cost2, rates2, cost1, rates1) >= 0)) {
+            return base_SUPERSET;
+        } else {
+            return base_DIFFERENT;
+        }
+
+    case base_SUBSET:
+        /* pdbm2 is bigger. Check whether it is also the cheapest:
+         * This is the case when the difference between pdbm1 and
+         * pdbm2 is always non-negative (the infimum is not smaller
+         * than 0).
+         */
+        cost2 = costAtOtherOffset(dbm2, rates2, cost2, dbm1);
+        if (cost2 <= cost1 &&
+            (leq(rates2, rates2 + dim, rates1) || infOfDiff(dbm1, dim, cost1, rates1, cost2, rates2) >= 0)) {
+            return base_SUBSET;
+        } else {
+            return base_DIFFERENT;
+        }
+
+    case base_EQUAL:
+        /* Both have the same size. We need to compare the planes to
+         * see which one is cheaper.
+         */
+
+        /* Do sound and cheap comparison first.
+         */
+        c = (cost1 <= cost2 && leq(rates1, rates1 + dim, rates2)) ? 1 : 0;
+        d = (cost2 <= cost1 && leq(rates2, rates2 + dim, rates1)) ? 1 : 0;
+
+        if ((c & d) != 0) {
+            return base_EQUAL;
+        } else if (c != 0) {
+            return base_SUPERSET;
+        } else if (d != 0) {
+            return base_SUBSET;
+        }
+
+        /* The planes are incomparable, so we need to do the
+         * subtraction. Notice that priced zones are not canonical,
+         * so the two zones can in fact be equal even though the rates
+         * are different.  Therefore we must also check for the
+         * situation where both infima are zero.
+         *
+         * Notice that dbm1 equals dbm2, hence we do not need to
+         * unpack dbm2.
+         */
+        c = infOfDiff(dbm1, dim, cost2, rates2, cost1, rates1);
+        if (c > 0) {
+            /* Early return to avoid unnecessary computation of the
+             * second subtraction.
+             */
+            return base_SUPERSET;
+        }
+
+        d = infOfDiff(dbm1, dim, cost1, rates1, cost2, rates2);
+        if (c == 0 && d == 0) {
+            return base_EQUAL;
+        }
+        if (c >= 0) {
+            return base_SUPERSET;
+        }
+        if (d >= 0) {
+            return base_SUBSET;
+        }
+        return base_DIFFERENT;
+
+    default: return base_DIFFERENT;
+    }
+}
+
+// This assumes dbmx is of type raw_t*
+#define RATES(dbmx, dimx) ((int32_t*)(dbmx + (dimx * dimx)))
+
+// This assumes dbmx is of type raw_t*
+#define COST(dbmx, dimx) ((int32_t*)(dbmx + (dimx * dimx) + dimx))
+
+relation_t pdbm_relation(const raw_t* dbm1_raw, const raw_t* dbm2_raw, size_t dim, relation_t rel)
+{
+    assert(dbm1_raw && dbm2_raw && dim);
+
+    auto dbm1 = dbm::reader(dbm1_raw, dim);
+    auto dbm2 = dbm::reader(dbm2_raw, dim);
+    const int32_t* rates1 = RATES(dbm1_raw, dim);
+    const int32_t* rates2 = RATES(dbm2_raw, dim);
+    int32_t cost1 = *COST(dbm1_raw, dim);
+    int32_t cost2 = *COST(dbm2_raw, dim);
+
+    int32_t c, d;
+
+    switch (rel) {
+    case base_SUPERSET:
+        /* pdbm2 is smaller. Check whether it is also the most
+         * expensive: This is the case when the difference between
+         * pdbm2 and pdbm1 is always non-negative (the infimum is not
+         * smaller than 0).
+         */
+        cost1 = costAtOtherOffset(dbm1, rates1, cost1, dbm2);
+        if (cost1 <= cost2 &&
+            (leq(rates1, rates1 + dim, rates2) || infOfDiff(dbm2, dim, cost2, rates2, cost1, rates1) >= 0)) {
+            return base_SUPERSET;
+        } else {
+            return base_DIFFERENT;
+        }
+
+    case base_SUBSET:
+        /* pdbm2 is bigger. Check whether it is also the cheapest:
+         * This is the case when the difference between pdbm1 and
+         * pdbm2 is always non-negative (the infimum is not smaller
+         * than 0).
+         */
+        cost2 = costAtOtherOffset(dbm2, rates2, cost2, dbm1);
+        if (cost2 <= cost1 &&
+            (leq(rates2, rates2 + dim, rates1) || infOfDiff(dbm1, dim, cost1, rates1, cost2, rates2) >= 0)) {
+            return base_SUBSET;
+        } else {
+            return base_DIFFERENT;
+        }
+
+    case base_EQUAL:
+        /* Both have the same size. We need to compare the planes to
+         * see which one is cheaper.
+         */
+
+        /* Do sound and cheap comparison first.
+         */
+        c = (cost1 <= cost2 && leq(rates1, rates1 + dim, rates2)) ? 1 : 0;
+        d = (cost2 <= cost1 && leq(rates2, rates2 + dim, rates1)) ? 1 : 0;
+
+        if ((c & d) != 0) {
+            return base_EQUAL;
+        } else if (c != 0) {
+            return base_SUPERSET;
+        } else if (d != 0) {
+            return base_SUBSET;
+        }
+
+        /* The planes are incomparable, so we need to do the
+         * subtraction. Notice that priced zones are not canonical,
+         * so the two zones can in fact be equal even though the rates
+         * are different.  Therefore we must also check for the
+         * situation where both infima are zero.
+         *
+         * Notice that dbm1 equals dbm2, hence we do not need to
+         * unpack dbm2.
+         */
+        c = infOfDiff(dbm1, dim, cost2, rates2, cost1, rates1);
+        if (c > 0) {
+            /* Early return to avoid unnecessary computation of the
+             * second subtraction.
+             */
+            return base_SUPERSET;
+        }
+
+        d = infOfDiff(dbm1, dim, cost1, rates1, cost2, rates2);
+        if (c == 0 && d == 0) {
+            return base_EQUAL;
+        }
+        if (c >= 0) {
+            return base_SUPERSET;
+        }
+        if (d >= 0) {
+            return base_SUBSET;
+        }
+        return base_DIFFERENT;
+
+    default: return base_DIFFERENT;
+    }
+}
+
 relation_t pdbm_relationWithMinDBM(const PDBM pdbm1, cindex_t dim, const mingraph_t pdbm2, raw_t* dbm2)
 {
     assert(pdbm1 && pdbm2 && dim && dbm2);
@@ -691,6 +883,9 @@ void pdbm_updateValue(PDBM& pdbm, cindex_t dim, cindex_t clock, uint32_t value)
     pdbm_prepare(pdbm, dim);
 
     dbm_updateValue(pdbm_matrix(pdbm, dim), dim, clock, value);
+
+    assert(pdbm_isValid(pdbm, dim));
+    if (!pdbm_isValid(pdbm, dim)) printf("NOT VALID!");
 }
 
 void pdbm_updateValueZero(PDBM& pdbm, cindex_t dim, cindex_t clock, uint32_t value, cindex_t zero)

@@ -244,7 +244,12 @@ bool pdbm_constrainToFacet(PDBM& pdbm, cindex_t dim, cindex_t i, cindex_t j);
  * @param  dim         is the dimension of \a pdbm1 and \a pdbm2.
  * @return The relation between pdbm1 and pdbm2
  */
+
+using udbm_relation_t = relation_t;
+
 relation_t pdbm_relation(const PDBM pdbm1, const PDBM pdbm2, cindex_t dim);
+relation_t pdbm_relation(const PDBM pdbm1, const PDBM pdbm2, cindex_t dim, relation_t rel);
+relation_t pdbm_relation(const raw_t* dbm1_raw, const raw_t* dbm2_raw, size_t dim, udbm_relation_t rel);
 
 /**
  * Relation between 2 priced dbms where one is in compressed. Notice

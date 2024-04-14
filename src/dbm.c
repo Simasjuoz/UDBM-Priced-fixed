@@ -702,6 +702,8 @@ void dbm_updateValue(raw_t* dbm, cindex_t dim, cindex_t k, int32_t value)
     }
 
     assert(DBM(k, k) == dbm_LE_ZERO);
+    if (!dbm_isValid(dbm, dim))
+        printf("wth!!!!");
 }
 
 /* Algorithm:
@@ -1350,7 +1352,7 @@ bool dbm_isUnbounded(const raw_t* dbm, cindex_t dim)
     cindex_t i;
     assert(dim && dbm);
 
-    for (i = 1; i < dim; ++i) {
+    for (i =1 ; i < dim; ++i) {
         if (DBM(i, 0) < dbm_LS_INFINITY)
             return false;
     }
