@@ -748,6 +748,13 @@ int32_t pdbm_getInfimum(const PDBM pdbm, cindex_t dim)
     return cache;
 }
 
+int32_t pdbm_getInfimum(const raw_t* smacc_pdbm, cindex_t dim)
+{
+    assert(smacc_pdbm && dim);
+    assert(dbm_isValid(smacc_pdbm, dim));
+    return pdbm_infimum(smacc_pdbm, dim, smacc_pdbm[dim*dim+dim], smacc_pdbm + (dim*dim));
+}
+
 int32_t pdbm_getInfimumValuation(const PDBM pdbm, cindex_t dim, int32_t* valuation, const bool* free)
 {
     assert(pdbm && dim && valuation);

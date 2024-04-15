@@ -274,7 +274,7 @@ relation_t pdbm_relationWithMinDBM(const PDBM pdbm, cindex_t dim, const mingraph
  * @return The infimum cost of \a pdbm.
  */
 int32_t pdbm_getInfimum(const PDBM pdbm, cindex_t dim);
-
+int32_t pdbm_getInfimum(const raw_t* smacc_pdbm, cindex_t dim);
 /**
  * Generates a valuation which has the infimum cost of the priced DBM.
  *
