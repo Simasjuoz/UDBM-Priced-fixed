@@ -890,9 +890,6 @@ void pdbm_updateValue(PDBM& pdbm, cindex_t dim, cindex_t clock, uint32_t value)
     pdbm_prepare(pdbm, dim);
 
     dbm_updateValue(pdbm_matrix(pdbm, dim), dim, clock, value);
-
-    assert(pdbm_isValid(pdbm, dim));
-    if (!pdbm_isValid(pdbm, dim)) printf("NOT VALID!");
 }
 
 void pdbm_updateValueZero(PDBM& pdbm, cindex_t dim, cindex_t clock, uint32_t value, cindex_t zero)
